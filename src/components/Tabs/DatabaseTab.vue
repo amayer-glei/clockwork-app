@@ -71,6 +71,7 @@
 					<td class="database-duration">
 						<span v-if="query.duration">{{$round(query.duration, 3)}} ms</span>
 					</td>
+					<td><a href="#" @click.prevent="copyQuery(query)" title="Copy to clipboard"><icon name="clipboard"></icon></a></td>
 				</tr>
 			</template>
 		</details-table>
@@ -105,13 +106,18 @@ export default {
 	}),
 	computed: {
 		columns() {
-			let columns = [ 'Model', 'Query', 'Duration' ]
+			let columns = [ 'Model', 'Query', 'Duration', '' ]
 
 			let hasMultipleConnections = (new Set(this.$request.databaseQueries.map(query => query.connection))).size > 1
 
 			if (hasMultipleConnections) columns.splice(1, 0, 'Connection')
 
 			return columns
+		}
+	},
+	methods: {
+		copyQuery(query) {
+			this.$copyText(this.prettify ? query.prettifiedQuery : query.query)
 		}
 	},
 	watch: {
